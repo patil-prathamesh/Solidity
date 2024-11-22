@@ -3,7 +3,11 @@
 pragma solidity ^0.8.26;
 
 contract Twitter {
-    uint16 constant MAX_TWEET_LENGTH = 280;
+    uint MAX_TWEET_LENGTH = 280;
+    address public owner;
+    constructor() {
+        owner = msg.sender;
+    }
 
     struct Tweet {
         address author;
@@ -13,6 +17,11 @@ contract Twitter {
     }
 
     mapping(address => Tweet[]) public tweets;
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "You are not a owner!!");
+        _;
+    }
 
     function createTweet(string memory _tweet) public {
 
@@ -33,5 +42,9 @@ contract Twitter {
 
     function getAllTweets(address _owner)public view returns (Tweet[] memory) {
         return tweets[_owner];
+    }
+
+    function changeTweetLength(uint newTweetLength) public onlyOwner {
+        MAX_TWEET_LENGTH = newTweetLength;
     }
 }
